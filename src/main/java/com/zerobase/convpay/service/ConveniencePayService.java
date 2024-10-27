@@ -1,20 +1,41 @@
 package com.zerobase.convpay.service;
 
 import com.zerobase.convpay.dto.*;
-import com.zerobase.convpay.type.MoneyUseCancelResult;
-import com.zerobase.convpay.type.MoneyUseResult;
-import com.zerobase.convpay.type.PayCancelResult;
-import com.zerobase.convpay.type.PayResult;
+import com.zerobase.convpay.type.*;
 
 // 편의점 결제 시스템
 public class ConveniencePayService {
     private final MoneyAdapter moneyAdapter = new MoneyAdapter();
+    private final CardAdapter cardAdapter = new CardAdapter();
 
     public PayResponse pay(PayRequeset payRequeset) {
-        MoneyUseResult moneyUseResult =
-                moneyAdapter.use(payRequeset.getPayAmount());
+        PaymentInterface paymentInterface;
 
-        if (moneyUseResult == MoneyUseResult.USE_FAIL) {
+        if (payRequeset.getPayMethodType() == PayMethodType.CARD) {
+            paymentInterface = cardAdapter;
+        } else {
+            paymentInterface = moneyAdapter;
+        }
+
+        /*CardUseResult cardUseResult;
+        MoneyUseResult moneyUseResult;
+
+        if (payRequeset.getPayMethodType() == PayMethodType.CARD) {
+            cardAdapter.authorization();
+            cardAdapter.approval();
+            cardUseResult = cardAdapter.capture(payRequeset.getPayAmount());
+        } else {
+            moneyUseResult = moneyAdapter.use(payRequeset.getPayAmount());
+        }
+
+        if ( cardUseResult == CardUseResult.USE_FAIL ||
+                moneyUseResult == MoneyUseResult.USE_FAIL) {
+            return new PayResponse(PayResult.FAIL, 0);
+        }*/
+
+        PaymentResult paymentResult = paymentInterface.payment(payRequeset.getPayAmount());
+
+        if(paymentResult == PaymentResult.PAYMENT_FAIL) {
             return new PayResponse(PayResult.FAIL, 0);
         }
 
@@ -23,14 +44,21 @@ public class ConveniencePayService {
         return new PayResponse(PayResult.SUCCESS, payRequeset.getPayAmount());
     }
 
-    public PayCancelResponse payCancle(PayCancelRequest payCancleRequest) {
-        MoneyUseCancelResult moneyUseCancleResult =
-                moneyAdapter.useCancel(payCancleRequest.getPayCancelAmount());
+    public PayCancelResponse payCancel(PayCancelRequest payCancelRequest) {
+        PaymentInterface paymentInterface;
 
-        if (moneyUseCancleResult == MoneyUseCancelResult.MONEY_USE_CANCEL_FAIL) {
+        if (payCancelRequest.getPayMethodType() == PayMethodType.CARD) {
+            paymentInterface = cardAdapter;
+        } else {
+            paymentInterface = moneyAdapter;
+        }
+
+        CancelPaymentResult cancelPaymentResult = paymentInterface.cancelPaymentResult(payCancelRequest.getPayCancelAmount());
+
+        if (cancelPaymentResult == CancelPaymentResult.CANCEL_PAYMENT_FAIL) {
             return new PayCancelResponse(PayCancelResult.PAY_CANCEL_FAIL, 0);
         }
 
-        return new PayCancelResponse(PayCancelResult.PAY_CANCEL_SUCCESS, payCancleRequest.getPayCancelAmount());
+        return new PayCancelResponse(PayCancelResult.PAY_CANCEL_SUCCESS, payCancelRequest.getPayCancelAmount());
     }
 }

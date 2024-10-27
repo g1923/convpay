@@ -6,6 +6,7 @@ import com.zerobase.convpay.dto.PayRequeset;
 import com.zerobase.convpay.dto.PayResponse;
 import com.zerobase.convpay.service.ConveniencePayService;
 import com.zerobase.convpay.type.ConvenienceType;
+import com.zerobase.convpay.type.PayMethodType;
 
 public class UserClient {
     public static void main(String[] args) {
@@ -14,16 +15,18 @@ public class UserClient {
         ConveniencePayService conveniencePayService = new ConveniencePayService();
 
         // 결제 1000원
-        PayRequeset payRequeset = new PayRequeset(ConvenienceType.G25, 1000);
+        PayRequeset payRequeset = new PayRequeset(PayMethodType.CARD,
+                ConvenienceType.G25, 1000);
         PayResponse payResponse = conveniencePayService.pay(payRequeset);
 
         System.out.println(payResponse);
 
         // 취소 500원
-        PayCancelRequest payCancelRequest = new PayCancelRequest(ConvenienceType.G25, 500);
-        PayCancelResponse payCancelResponse = conveniencePayService.payCancle(payCancelRequest);
+        PayCancelRequest payCancelRequest = new PayCancelRequest(PayMethodType.MONEY,
+                ConvenienceType.G25, 500);
+        PayCancelResponse payCancelResponse = conveniencePayService.payCancel(payCancelRequest);
 
-        System.out.println();
+        System.out.println(payCancelResponse);
     }
 
 }

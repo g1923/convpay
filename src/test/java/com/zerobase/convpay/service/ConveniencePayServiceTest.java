@@ -6,6 +6,7 @@ import com.zerobase.convpay.type.ConvenienceType;
 import com.zerobase.convpay.dto.PayRequeset;
 import com.zerobase.convpay.dto.PayResponse;
 import com.zerobase.convpay.type.PayCancelResult;
+import com.zerobase.convpay.type.PayMethodType;
 import com.zerobase.convpay.type.PayResult;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class ConveniencePayServiceTest {
     @Test
     void pay_success() {
         //given
-        PayRequeset payRequeset = new PayRequeset(ConvenienceType.G25, 50);
+        PayRequeset payRequeset = new PayRequeset(PayMethodType.MONEY, ConvenienceType.G25, 50);
 
         //when
         PayResponse payResponse = conveniencePayService.pay(payRequeset);
@@ -30,7 +31,7 @@ class ConveniencePayServiceTest {
     @Test
     void pay_fail() {
         //given
-        PayRequeset payRequeset = new PayRequeset(ConvenienceType.G25, 1000_001);
+        PayRequeset payRequeset = new PayRequeset(PayMethodType.MONEY, ConvenienceType.G25, 1000_001);
 
         //when
         PayResponse payResponse = conveniencePayService.pay(payRequeset);
@@ -44,10 +45,10 @@ class ConveniencePayServiceTest {
     @Test
     void pay_cancle_success() {
         //given
-        PayCancelRequest payCancleRequest = new PayCancelRequest(ConvenienceType.G25, 1000);
+        PayCancelRequest payCancleRequest = new PayCancelRequest(PayMethodType.MONEY, ConvenienceType.G25, 1000);
 
         //when
-        PayCancelResponse payCancelResponse = conveniencePayService.payCancle(payCancleRequest);
+        PayCancelResponse payCancelResponse = conveniencePayService.payCancel(payCancleRequest);
 
         //then
         assertEquals(PayCancelResult.PAY_CANCEL_SUCCESS, payCancelResponse.getPayCancelResult());
@@ -57,10 +58,10 @@ class ConveniencePayServiceTest {
     @Test
     void pay_cancle_fail() {
         //given
-        PayCancelRequest payCancleRequest = new PayCancelRequest(ConvenienceType.G25, 99);
+        PayCancelRequest payCancleRequest = new PayCancelRequest(PayMethodType.MONEY, ConvenienceType.G25, 99);
 
         //when
-        PayCancelResponse payCancelResponse = conveniencePayService.payCancle(payCancleRequest);
+        PayCancelResponse payCancelResponse = conveniencePayService.payCancel(payCancleRequest);
 
         //then
         assertEquals(PayCancelResult.PAY_CANCEL_FAIL, payCancelResponse.getPayCancelResult());
