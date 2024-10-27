@@ -3,23 +3,38 @@ package com.zerobase.convpay.service;
 import com.zerobase.convpay.dto.*;
 import com.zerobase.convpay.type.*;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 // 편의점 결제 시스템
 public class ConveniencePayService {
-    private final MoneyAdapter moneyAdapter = new MoneyAdapter();
-    private final CardAdapter cardAdapter = new CardAdapter();
-    private final DiscountInterface discountInterface = new DiscountPayMethod();
+    private final Map<PayMethodType, PaymentInterface> paymentInterfaceMap =
+            new HashMap<>();
+    private final DiscountInterface discountInterface;
+//    private final MoneyAdapter moneyAdapter = new MoneyAdapter();
+//    private final CardAdapter cardAdapter = new CardAdapter();
 //    private final DiscountInterface discountInterface = new DiscountByConvenience();
 
+    public ConveniencePayService(Set<PaymentInterface> paymentInterfaceSet,
+                                 DiscountInterface discountInterface) {
+        paymentInterfaceSet.forEach(
+                paymentInterface -> paymentInterfaceMap.put(
+                        paymentInterface.getPaymentType(),
+                        paymentInterface
+                )
+        );
+        this.discountInterface = discountInterface;
+    }
+
     public PayResponse pay(PayRequeset payRequeset) {
-        PaymentInterface paymentInterface;
+        PaymentInterface paymentInterface = paymentInterfaceMap.get(payRequeset.getPayMethodType());
 
-        if (payRequeset.getPayMethodType() == PayMethodType.CARD) {
-            paymentInterface = cardAdapter;
-        } else {
-            paymentInterface = moneyAdapter;
-        }
-
-//        PaymentResult paymentResult = paymentInterface.payment(payRequeset.getPayAmount());
+//        if (payRequeset.getPayMethodType() == PayMethodType.CARD) {
+//            paymentInterface = cardAdapter;
+//        } else {
+//            paymentInterface = moneyAdapter;
+//        }
 
         // 할인 금액 적용
         Integer discountedAmount = discountInterface.getDiscountedAmount(payRequeset);
@@ -35,13 +50,13 @@ public class ConveniencePayService {
     }
 
     public PayCancelResponse payCancel(PayCancelRequest payCancelRequest) {
-        PaymentInterface paymentInterface;
+        PaymentInterface paymentInterface = paymentInterfaceMap.get(payCancelRequest.getPayMethodType());
 
-        if (payCancelRequest.getPayMethodType() == PayMethodType.CARD) {
-            paymentInterface = cardAdapter;
-        } else {
-            paymentInterface = moneyAdapter;
-        }
+//        if (payCancelRequest.getPayMethodType() == PayMethodType.CARD) {
+//            paymentInterface = cardAdapter;
+//        } else {
+//            paymentInterface = moneyAdapter;
+//        }
 
         CancelPaymentResult cancelPaymentResult = paymentInterface.cancelPaymentResult(payCancelRequest.getPayCancelAmount());
 
