@@ -7,6 +7,8 @@ import com.zerobase.convpay.type.*;
 public class ConveniencePayService {
     private final MoneyAdapter moneyAdapter = new MoneyAdapter();
     private final CardAdapter cardAdapter = new CardAdapter();
+    private final DiscountInterface discountInterface = new DiscountPayMethod();
+//    private final DiscountInterface discountInterface = new DiscountByConvenience();
 
     public PayResponse pay(PayRequeset payRequeset) {
         PaymentInterface paymentInterface;
@@ -17,23 +19,11 @@ public class ConveniencePayService {
             paymentInterface = moneyAdapter;
         }
 
-        /*CardUseResult cardUseResult;
-        MoneyUseResult moneyUseResult;
+//        PaymentResult paymentResult = paymentInterface.payment(payRequeset.getPayAmount());
 
-        if (payRequeset.getPayMethodType() == PayMethodType.CARD) {
-            cardAdapter.authorization();
-            cardAdapter.approval();
-            cardUseResult = cardAdapter.capture(payRequeset.getPayAmount());
-        } else {
-            moneyUseResult = moneyAdapter.use(payRequeset.getPayAmount());
-        }
-
-        if ( cardUseResult == CardUseResult.USE_FAIL ||
-                moneyUseResult == MoneyUseResult.USE_FAIL) {
-            return new PayResponse(PayResult.FAIL, 0);
-        }*/
-
-        PaymentResult paymentResult = paymentInterface.payment(payRequeset.getPayAmount());
+        // 할인 금액 적용
+        Integer discountedAmount = discountInterface.getDiscountedAmount(payRequeset);
+        PaymentResult paymentResult = paymentInterface.payment(discountedAmount);
 
         if(paymentResult == PaymentResult.PAYMENT_FAIL) {
             return new PayResponse(PayResult.FAIL, 0);
@@ -41,7 +31,7 @@ public class ConveniencePayService {
 
         // 예외케이스들이 언제 어떻게 존재할지 모르기 때문에 단하나의 성공케이스를 맨마지막 리턴값으로 보냄
         // SUCCESS CASE
-        return new PayResponse(PayResult.SUCCESS, payRequeset.getPayAmount());
+        return new PayResponse(PayResult.SUCCESS, discountedAmount);
     }
 
     public PayCancelResponse payCancel(PayCancelRequest payCancelRequest) {
