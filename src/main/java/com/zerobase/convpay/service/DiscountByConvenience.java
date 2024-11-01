@@ -1,11 +1,11 @@
 package com.zerobase.convpay.service;
 
 import com.zerobase.convpay.dto.PayRequeset;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("test")
+@Primary
 public class DiscountByConvenience implements DiscountInterface{
     @Override
     public Integer getDiscountedAmount(PayRequeset payRequeset) {
