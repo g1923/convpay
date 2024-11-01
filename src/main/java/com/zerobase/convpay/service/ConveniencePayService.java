@@ -6,6 +6,8 @@ import com.zerobase.convpay.type.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +18,7 @@ public class ConveniencePayService {
     private final DiscountInterface discountInterface;
 
     public ConveniencePayService(Set<PaymentInterface> paymentInterfaceSet,
+                                 @Qualifier("discountByConvenience") // DiscountByConvenience 클래스의 첫글자를 소문자로
                                  DiscountInterface discountInterface) {
         paymentInterfaceSet.forEach(
                 paymentInterface -> paymentInterfaceMap.put(
