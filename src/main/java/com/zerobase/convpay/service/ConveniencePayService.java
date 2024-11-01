@@ -7,26 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("prototype")
-/*
- * singletone : 재활용
- * request : 요청에 따라 새로 만듦
- * prototype: 매번 새로 만듦
- * session : 세션마다 새로 만듦
- * */
-// 편의점 결제 시스템
 public class ConveniencePayService {
     private final Map<PayMethodType, PaymentInterface> paymentInterfaceMap =
             new HashMap<>();
     private final DiscountInterface discountInterface;
 
     public ConveniencePayService(Set<PaymentInterface> paymentInterfaceSet,
-                                 @Qualifier("discountByConvenience") // DiscountByConvenience 클래스의 첫글자를 소문자로
                                  DiscountInterface discountInterface) {
         paymentInterfaceSet.forEach(
                 paymentInterface -> paymentInterfaceMap.put(

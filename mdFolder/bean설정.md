@@ -12,3 +12,18 @@
     - Request : 요청에 따라 계속 새로 만듦
     - Session : 세션 마다 계속 새로 만듦
     - WebSocket:
+
+### 3. 스프링의 환경설정 : 프로파일(Profile)
+    - 현업에서는 환경을 다양하게 하여 해당 환경에서만 동작하는 Bean을 만드는 경우가 있음
+    - 클래스단위에 적용하거나 메서드 단위에 적용가능
+        - 클래스 단위
+            * @Configuration @prorile("test")
+            * @Component @prorile("test")
+        - 메서드 단위
+            * @Bean @Porfile("test")
+    - -Dspring.profiles.active=sandbox, beta, production
+    - 프로파일 표현식
+        * @Profile("!production")
+        * ! (not), & (and), | (or)
+![img2.png](images/img2.png)
+![img1.png](images/img1.png)

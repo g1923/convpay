@@ -19,16 +19,6 @@ public class UserClient {
                 new AnnotationConfigApplicationContext(ApplicationConfig.class);
         ConveniencePayService conveniencePayService =
                 applicationContext.getBean("conveniencePayService", ConveniencePayService.class);
-        System.out.println("=============== conveniencePayService ===============");
-        System.out.println(conveniencePayService);
-
-        ConveniencePayService conveniencePayService2 =
-                applicationContext.getBean("conveniencePayService", ConveniencePayService.class);
-        System.out.println(conveniencePayService2);
-
-        ConveniencePayService conveniencePayService3 =
-                applicationContext.getBean("conveniencePayService", ConveniencePayService.class);
-        System.out.println(conveniencePayService3);
 
         // 결제 1000원
         PayRequeset payRequeset = new PayRequeset(PayMethodType.CARD,
